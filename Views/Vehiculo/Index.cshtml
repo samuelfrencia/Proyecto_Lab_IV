@@ -9,7 +9,55 @@
 
 <p>
     <a asp-action="Create" class="btn btn-outline-dark">Create New</a>
-</p>
+</p><br />
+<div class="row">
+    <div class="col-md-6">
+        Importar datos desde archivo CSV:
+        <form asp-action="Importar" enctype="multipart/form-data">
+            <div class="form-group">
+                <input name="archImportar" id="archImportar" type="file" />
+                <input type="submit" value="Importar" class="btn btn-outline-dark" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        Importar datos desde archivo Excel:
+        <form asp-action="ImportarExcel" enctype="multipart/form-data">
+            <div class="form-group">
+                <input name="archImportar" id="archImportarE" type="file" />
+                <input type="submit" value="Importar" class="btn btn-outline-dark" />
+            </div>
+        </form>
+    </div>
+</div>
+<br />
+<form>
+    <div class="row">
+        <div class="col-3">
+            Marca:
+            <select class="form-select" asp-for="busqMarcaId" asp-items="@Model.ListMarca">
+                <option value="">Todos</option>
+            </select>
+		</div>
+        <div class="col-3">
+            Tipo vehiculo:
+            <select class="form-select" asp-for="busqTipoVehiculoId" asp-items="@Model.ListTipoVehiculo">
+                <option value="">Todos</option>
+            </select>
+        </div>
+        <div class="col-3">
+            Concesionaria:
+            <select class="form-select" asp-for="busqConcesionariaId" asp-items="@Model.ListConcesionaria">
+                <option value="">Todos</option>
+            </select>
+        </div>
+        <div class="col-3"><br />
+            <input class="btn btn-outline-info" type="submit" value="Buscar" /> ~
+	        <input class="btn btn-outline-dark" type="reset" value="Limpiar filtros" />
+        </div>
+	</div>
+</form>
+<br />
 <table class="table table-dark table-hover text-center">
     <thead>
         <tr>
