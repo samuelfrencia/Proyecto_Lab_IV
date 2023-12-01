@@ -11,71 +11,71 @@
     <h4>Vehiculo</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.patente)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.patente)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.marca)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.marca.nombre)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.marca.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.marca.nombre)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.modelo)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.modelo)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.anio)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.anio)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.precio)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.precio)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.tipoVehiculo)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.tipoVehiculo.nombre)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.tipoVehiculo.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.tipoVehiculo.nombre)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.fotografia)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.fotografia)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.color)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.color)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.estado)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.estado)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.concesionaria)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.concesionaria.nombre)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.concesionaria.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.concesionaria.nombre)
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-outline-danger" /> |
+        <a asp-action="Index" class="btn btn-outline-dark">Back to List</a>
     </form>
 </div>
