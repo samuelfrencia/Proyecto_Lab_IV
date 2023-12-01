@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Proyecto_Lab_IV.Data;
 using Proyecto_Lab_IV.Models;
+using Proyecto_Lab_IV.ModelView;
 
 namespace Proyecto_Lab_IV.Controllers
 {
@@ -20,11 +21,27 @@ namespace Proyecto_Lab_IV.Controllers
         }
 
         // GET: Marca
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina = 1)
         {
-              return _context.marca != null ? 
-                          View(await _context.marca.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.marca'  is null.");
+            Paginador paginas = new Paginador();
+            paginas.PaginaActual = pagina;
+            paginas.RegistrosPorPagina = 3;
+
+            var applicationDbContext = _context.marca;
+
+            paginas.TotalRegistros = applicationDbContext.Count();
+
+            var registrosMostrar = applicationDbContext
+            .Skip((pagina - 1) * paginas.RegistrosPorPagina)
+            .Take(paginas.RegistrosPorPagina);
+
+            MarcaVM datos = new MarcaVM()
+            {
+                marcas = registrosMostrar.ToList(),
+                paginador = paginas
+            };
+
+            return View(datos);
         }
 
         // GET: Marca/Details/5

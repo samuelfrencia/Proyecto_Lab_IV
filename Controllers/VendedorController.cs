@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Proyecto_Lab_IV.Data;
 using Proyecto_Lab_IV.Models;
+using Proyecto_Lab_IV.ModelView;
 
 namespace Proyecto_Lab_IV.Controllers
 {
@@ -22,10 +23,28 @@ namespace Proyecto_Lab_IV.Controllers
         }
 
         // GET: Vendedor
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina = 1)
         {
+ 
+            Paginador paginas = new Paginador();
+            paginas.PaginaActual = pagina;
+            paginas.RegistrosPorPagina = 3;
+ 
             var applicationDbContext = _context.vendedor.Include(v => v.concesionaria);
-            return View(await applicationDbContext.ToListAsync());
+
+            paginas.TotalRegistros = applicationDbContext.Count();
+
+            var registrosMostrar = applicationDbContext
+            .Skip((pagina - 1) * paginas.RegistrosPorPagina)
+            .Take(paginas.RegistrosPorPagina);
+
+            VendedorVM datos = new VendedorVM()
+            {
+                vendedores = registrosMostrar.ToList(),
+                paginador = paginas
+            };
+
+            return View(datos);
         }
 
         // GET: Vendedor/Details/5

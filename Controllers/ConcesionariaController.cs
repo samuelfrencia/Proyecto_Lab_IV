@@ -7,24 +7,44 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Proyecto_Lab_IV.Data;
 using Proyecto_Lab_IV.Models;
+using Proyecto_Lab_IV.ModelView;
 
 namespace Proyecto_Lab_IV.Controllers
 {
     public class ConcesionariaController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public ConcesionariaController(ApplicationDbContext context)
+        public ConcesionariaController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: Concesionaria
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina = 1)
         {
-              return _context.concesionaria != null ? 
-                          View(await _context.concesionaria.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.concesionaria'  is null.");
+            Paginador paginas = new Paginador();
+            paginas.PaginaActual = pagina;
+            paginas.RegistrosPorPagina = 3;
+
+            var applicationDbContext = _context.concesionaria;
+
+            paginas.TotalRegistros = applicationDbContext.Count();
+
+            var registrosMostrar = applicationDbContext
+            .Skip((pagina - 1) * paginas.RegistrosPorPagina)
+            .Take(paginas.RegistrosPorPagina);
+
+            ConcesionariaVM datos = new ConcesionariaVM()
+            {
+                concesionarias = registrosMostrar.ToList(),
+                paginador = paginas
+            };
+
+            return View(datos);
+
         }
 
         // GET: Concesionaria/Details/5

@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Proyecto_Lab_IV.Models.Concesionaria>
+﻿@* @model IEnumerable<Proyecto_Lab_IV.Models.Concesionaria>*@
+    
+@model Proyecto_Lab_IV.ModelView.ConcesionariaVM
 
 @{
     ViewData["Title"] = "Index";
@@ -13,22 +15,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.nombre)
+                @Html.DisplayNameFor(model => model.concesionarias[0].nombre)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.direccion)
+                @Html.DisplayNameFor(model => model.concesionarias[0].direccion)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.nroTel)
+                @Html.DisplayNameFor(model => model.concesionarias[0].nroTel)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.correo)
+                @Html.DisplayNameFor(model => model.concesionarias[0].correo)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.concesionarias)
         {
             <tr>
                 <td>
@@ -52,3 +54,4 @@
         }
     </tbody>
 </table>
+<partial name="_Paginador" for="@Model.paginador" />

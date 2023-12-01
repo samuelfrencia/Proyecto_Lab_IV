@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Proyecto_Lab_IV.Models.Marca>
+﻿@* @model IEnumerable<Proyecto_Lab_IV.Models.Marca> *@
+
+@model Proyecto_Lab_IV.ModelView.MarcaVM
 
 @{
     ViewData["Title"] = "Index";
@@ -13,13 +15,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.nombre)
+                @Html.DisplayNameFor(model => model.marcas[0].nombre)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.marcas)
         {
             <tr>
                 <td>
@@ -34,3 +36,4 @@
         }
     </tbody>
 </table>
+<partial name="_Paginador" for="@Model.paginador" />
