@@ -55,87 +55,87 @@ namespace Proyecto_Lab_IV.Controllers
             return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "listado.csv");
         }
 
-        //public IActionResult Importar()
-        //{
-        //    var archivos = HttpContext.Request.Form.Files;
-        //    if (archivos != null && archivos.Count > 0)
-        //    {
-        //        var archivoImpo = archivos[0];
-        //        if (archivoImpo.Length > 0)
-        //        {
-        //            // subir archivo para luego leer
-        //            var pathDestino = Path.Combine(_env.WebRootPath, "impo");
-        //            var archivoDestino = Guid.NewGuid().ToString().Replace("-", "") + Path.GetExtension(archivoImpo.FileName);
-        //            string rutaCompleta = Path.Combine(pathDestino, archivoDestino);
+        public IActionResult Importar()
+        {
+            var archivos = HttpContext.Request.Form.Files;
+            if (archivos != null && archivos.Count > 0)
+            {
+                var archivoImpo = archivos[0];
+                if (archivoImpo.Length > 0)
+                {
+                    // subir archivo para luego leer
+                    var pathDestino = Path.Combine(_env.WebRootPath, "impo");
+                    var archivoDestino = Guid.NewGuid().ToString().Replace("-", "") + Path.GetExtension(archivoImpo.FileName);
+                    string rutaCompleta = Path.Combine(pathDestino, archivoDestino);
 
-        //            using (var filestream = new FileStream(rutaCompleta, FileMode.Create))
-        //            {
-        //                archivoImpo.CopyTo(filestream);
-        //            };
+                    using (var filestream = new FileStream(rutaCompleta, FileMode.Create))
+                    {
+                        archivoImpo.CopyTo(filestream);
+                    };
 
-        //            // leer archivo
-        //            using (var file = new FileStream(rutaCompleta, FileMode.Open))
-        //            {
-        //                List<string> renglones = new List<string>();
-        //                List<Alumno> AlumnosArch = new List<Alumno>();
+                    // leer archivo
+                    using (var file = new FileStream(rutaCompleta, FileMode.Open))
+                    {
+                        List<string> renglones = new List<string>();
+                        List<Alumno> AlumnosArch = new List<Alumno>();
 
-        //                StreamReader fileContent = new StreamReader(file); // System.Text.Encoding.Default
-        //                do
-        //                {
-        //                    renglones.Add(fileContent.ReadLine());
-        //                }
-        //                while (!fileContent.EndOfStream);
+                        StreamReader fileContent = new StreamReader(file); // System.Text.Encoding.Default
+                        do
+                        {
+                            renglones.Add(fileContent.ReadLine());
+                        }
+                        while (!fileContent.EndOfStream);
 
-        //                int indice = 0;
-        //                foreach (string renglon in renglones)
-        //                {
-        //                    if (indice != 0)
-        //                    {
-        //                        int salida;
-        //                        string[] datos = renglon.Split(';');
+                        int indice = 0;
+                        foreach (string renglon in renglones)
+                        {
+                            if (indice != 0)
+                            {
+                                int salida;
+                                string[] datos = renglon.Split(';');
 
-        //                        int carrera = (int.TryParse(datos[datos.Length - 1], out salida) ? salida : 0);
-        //                        if (carrera > 0 && _context.carreras.Where(c => c.Id == carrera).FirstOrDefault() != null)
-        //                        {
-        //                            Alumno alumnotemporal = new Alumno()
-        //                            {
-        //                                CarreraId = carrera,
-        //                                nombre = datos[0].Trim(),
-        //                                edad = int.TryParse(datos[1].Trim(), out salida) ? salida : 0,
-        //                                cursando = datos[2].Trim() == "1" ? true : false,
-        //                                legajo = int.TryParse(datos[3].Trim(), out salida) ? salida : 0,
-        //                            };
-        //                            AlumnosArch.Add(alumnotemporal);
-        //                        }
-        //                    }
-        //                    indice++;
-        //                }
-        //                if (AlumnosArch.Count > 0)
-        //                {
-        //                    _context.alumnos.AddRange(AlumnosArch);
-        //                    _context.SaveChanges();
+                                int carrera = (int.TryParse(datos[datos.Length - 1], out salida) ? salida : 0);
+                                if (carrera > 0 && _context.carreras.Where(c => c.Id == carrera).FirstOrDefault() != null)
+                                {
+                                    Alumno alumnotemporal = new Alumno()
+                                    {
+                                        CarreraId = carrera,
+                                        nombre = datos[0].Trim(),
+                                        edad = int.TryParse(datos[1].Trim(), out salida) ? salida : 0,
+                                        cursando = datos[2].Trim() == "1" ? true : false,
+                                        legajo = int.TryParse(datos[3].Trim(), out salida) ? salida : 0,
+                                    };
+                                    AlumnosArch.Add(alumnotemporal);
+                                }
+                            }
+                            indice++;
+                        }
+                        if (AlumnosArch.Count > 0)
+                        {
+                            _context.alumnos.AddRange(AlumnosArch);
+                            _context.SaveChanges();
 
-        //                    ViewBag.resultado = "Se subio archivo";
-        //                }
-        //                else
-        //                    ViewBag.resultado = "Error en el formato de archivo";
-        //            }
+                            ViewBag.resultado = "Se subio archivo";
+                        }
+                        else
+                            ViewBag.resultado = "Error en el formato de archivo";
+                    }
 
-        //            // borrar archivo temporal
-        //            if (System.IO.File.Exists(rutaCompleta))
-        //                System.IO.File.Delete(rutaCompleta);
-        //        }
-        //        else
-        //            ViewBag.resultado = "Error en el archivo vacio";
-        //    }
-        //    else
-        //        ViewBag.resultado = "Error en el archivo enviado";
+                    // borrar archivo temporal
+                    if (System.IO.File.Exists(rutaCompleta))
+                        System.IO.File.Delete(rutaCompleta);
+                }
+                else
+                    ViewBag.resultado = "Error en el archivo vacio";
+            }
+            else
+                ViewBag.resultado = "Error en el archivo enviado";
 
-        //    var applicationDbContext = _context.alumnos.Include(a => a.carrera);
-        //    return View("Index", applicationDbContext.ToListAsync());
-        //}
+            var applicationDbContext = _context.alumnos.Include(a => a.carrera);
+            return View("Index", applicationDbContext.ToListAsync());
+        }
 
-        // GET: Vehiculo
+        GET: Vehiculo
         public async Task<IActionResult> Index(int? busqMarcaId, int? busqTipoVehiculoId, int? busqConcesionariaId, int pagina = 1)
         {
             Paginador paginas = new Paginador();
@@ -158,7 +158,7 @@ namespace Proyecto_Lab_IV.Controllers
                 applicationDbContext = applicationDbContext.Where(e => e.tipoVehiculoId.Equals(busqTipoVehiculoId));
                 paginas.ValoresQueryString.Add("tipoVehiculoId", busqTipoVehiculoId.ToString());
             }
-            if (busqMarcaId != null && busqMarcaId > 0)
+            if (busqConcesionariaId != null && busqConcesionariaId > 0)
             {
                 applicationDbContext = applicationDbContext.Where(e => e.concesionariaId.Equals(busqConcesionariaId));
                 paginas.ValoresQueryString.Add("concesionariaId", busqConcesionariaId.ToString());

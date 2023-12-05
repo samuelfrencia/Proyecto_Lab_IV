@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\fotos\" />
+    <Folder Include="wwwroot\impo\" />
   </ItemGroup>
 
 </Project>
