@@ -11,25 +11,19 @@
     <a asp-action="Create" class="btn btn-outline-dark">Create New</a>
 </p><br />
 <div class="row">
-    <div class="col-md-6">
-        Importar datos desde archivo CSV:
+    <div class="col-md-12">
+        Importar datos desde archivo Excel:
         <form asp-action="Importar" enctype="multipart/form-data">
             <div class="form-group">
-                <input name="archImportar" id="archImportar" type="file" />
-                <input type="submit" value="Importar" class="btn btn-outline-dark" />
-            </div>
-        </form>
-    </div>
-    <div class="col-md-6">
-        Importar datos desde archivo Excel:
-        <form asp-action="ImportarExcel" enctype="multipart/form-data">
-            <div class="form-group">
                 <input name="archImportar" id="archImportarE" type="file" />
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Importar" class="btn btn-outline-dark" />
             </div>
         </form>
     </div>
 </div>
+
 <br />
 <form>
     <div class="row">

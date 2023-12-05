@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using Proyecto_Lab_IV.Data;
 using Proyecto_Lab_IV.Models;
 using Proyecto_Lab_IV.ModelView;
+using System.IO;
 
 namespace Proyecto_Lab_IV.Controllers
 {
@@ -22,38 +24,7 @@ namespace Proyecto_Lab_IV.Controllers
             _context = context;
             _env = env;
         }
-        public FileResult Exportar()
-        {
-            StringBuilder sb = new StringBuilder();
-            var fields = typeof(Vehiculo).GetProperties();
 
-            //sb.Append("Nombre; Edad; estado; legajo; carreraID; nombreCarrera;\r\n");
-            foreach (var campo in fields)
-                sb.Append(campo.ToString() + ";");
-                sb.Append("\r\n");
-
-            foreach (Vehiculo vehiculo in _context.vehiculo.Include(m => m.marca).Include(t => t.tipoVehiculo).Include(c => c.concesionaria).ToList())
-            {
-                //sb.Append(String.Join(";", alumno.Select(x =>
-                //                 String.Join(",", fields.Select(f => f.GetValue(x)))
-                //             )));
-
-                sb.Append(vehiculo.patente + ";");
-                sb.Append(vehiculo.marca + ";");
-                sb.Append(vehiculo.modelo + ";");
-                sb.Append(vehiculo.anio + ";");
-                sb.Append(vehiculo.precio + ";"); 
-                sb.Append(vehiculo.tipoVehiculo + ";");
-                sb.Append(vehiculo.fotografia + ";");
-                sb.Append(vehiculo.color + ";");
-                sb.Append(vehiculo.estado + ";");
-                sb.Append(vehiculo.concesionaria );
-                //Append new line character.
-                sb.Append("\r\n");
-            }
-
-            return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "listado.csv");
-        }
 
         public IActionResult Importar()
         {
@@ -77,7 +48,7 @@ namespace Proyecto_Lab_IV.Controllers
                     using (var file = new FileStream(rutaCompleta, FileMode.Open))
                     {
                         List<string> renglones = new List<string>();
-                        List<Alumno> AlumnosArch = new List<Alumno>();
+                        List<Vehiculo> VehiculoArch = new List<Vehiculo>();
 
                         StreamReader fileContent = new StreamReader(file); // System.Text.Encoding.Default
                         do
@@ -94,25 +65,24 @@ namespace Proyecto_Lab_IV.Controllers
                                 int salida;
                                 string[] datos = renglon.Split(';');
 
-                                int carrera = (int.TryParse(datos[datos.Length - 1], out salida) ? salida : 0);
-                                if (carrera > 0 && _context.carreras.Where(c => c.Id == carrera).FirstOrDefault() != null)
-                                {
-                                    Alumno alumnotemporal = new Alumno()
-                                    {
-                                        CarreraId = carrera,
-                                        nombre = datos[0].Trim(),
-                                        edad = int.TryParse(datos[1].Trim(), out salida) ? salida : 0,
-                                        cursando = datos[2].Trim() == "1" ? true : false,
-                                        legajo = int.TryParse(datos[3].Trim(), out salida) ? salida : 0,
-                                    };
-                                    AlumnosArch.Add(alumnotemporal);
-                                }
+                                //if (carrera > 0 && _context.carreras.Where(c => c.Id == carrera).FirstOrDefault() != null)
+                                //{
+                                //    Vehiculo vehiculotemporal = new Vehiculo()
+                                //    {
+                                //        //CarreraId = carrera,
+                                //        //nombre = datos[0].Trim(),
+                                //        //edad = int.TryParse(datos[1].Trim(), out salida) ? salida : 0,
+                                //        //cursando = datos[2].Trim() == "1" ? true : false,
+                                //        //legajo = int.TryParse(datos[3].Trim(), out salida) ? salida : 0,
+                                //    };
+                                //    VehiculoArch.Add(vehiculotemporal);
+                                //}
                             }
                             indice++;
                         }
-                        if (AlumnosArch.Count > 0)
+                        if (VehiculoArch.Count > 0)
                         {
-                            _context.alumnos.AddRange(AlumnosArch);
+                            _context.vehiculo.AddRange(VehiculoArch);
                             _context.SaveChanges();
 
                             ViewBag.resultado = "Se subio archivo";
@@ -131,11 +101,15 @@ namespace Proyecto_Lab_IV.Controllers
             else
                 ViewBag.resultado = "Error en el archivo enviado";
 
-            var applicationDbContext = _context.alumnos.Include(a => a.carrera);
+            var applicationDbContext = _context.vehiculo
+                .Include(m => m.marca)
+                .Include(t => t.tipoVehiculo)
+                .Include(c => c.concesionaria);
             return View("Index", applicationDbContext.ToListAsync());
         }
 
-        GET: Vehiculo
+
+        // GET: Vehiculo
         public async Task<IActionResult> Index(int? busqMarcaId, int? busqTipoVehiculoId, int? busqConcesionariaId, int pagina = 1)
         {
             Paginador paginas = new Paginador();
