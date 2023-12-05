@@ -3,41 +3,14 @@
 }
 @model List<Proyecto_Lab_IV.Models.Vehiculo>
 
-<div class="container text-center">
-    <h1>Catalogo de vehiculos</h1>
-    <form>
-        <div class="row">
-            <div class="col-3">
-                Marca:
-                <select class="form-select" asp-for="busqMarcaId" asp-items="@Model.ListMarca">
-                    <option value="">Todos</option>
-                </select>
-            </div>
-            <div class="col-3">
-                Tipo vehiculo:
-                <select class="form-select" asp-for="busqTipoVehiculoId" asp-items="@Model.ListTipoVehiculo">
-                    <option value="">Todos</option>
-                </select>
-            </div>
-            <div class="col-3">
-                Concesionaria:
-                <select class="form-select" asp-for="busqConcesionariaId" asp-items="@Model.ListConcesionaria">
-                    <option value="">Todos</option>
-                </select>
-            </div>
-            <div class="col-3">
-                <br />
-                <input class="btn btn-outline-info" type="submit" value="Buscar" /> ~
-                <input class="btn btn-outline-dark" type="reset" value="Limpiar filtros" />
-            </div>
-        </div>
-    </form>
+<div class="container">
+    <h1 class="text-center" style="margin:60px">Catalogo de vehiculos</h1>
     <div class="row">
         @foreach (var vehiculo in Model)
         {
             <div class="col-4">
                 <div class="card shadow-sm" style="height:400px;width:400px; margin:20px">
-                    <h5 class="card-title text-center">Concesionario: @vehiculo.concesionaria.nombre</h5>
+                    <h5 class="card-title text-center" style="margin:10px">Concesionario: @vehiculo.concesionaria.nombre</h5>
                     @if (!string.IsNullOrEmpty(vehiculo.fotografia))
                     {
                         <img src="~/fotos/@vehiculo.fotografia" class="img-fluid mx-auto d-block mt-2" style="max-width:200px; max-height:200px;" />
@@ -52,7 +25,7 @@
             </div>
         }
     </div>
-</div>
+</div><br /><br />
 
 
 
