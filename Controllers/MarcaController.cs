@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using Proyecto_Lab_IV.ModelView;
 
 namespace Proyecto_Lab_IV.Controllers
 {
+    [Authorize]
     public class MarcaController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +22,7 @@ namespace Proyecto_Lab_IV.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         // GET: Marca
         public async Task<IActionResult> Index(int pagina = 1)
         {

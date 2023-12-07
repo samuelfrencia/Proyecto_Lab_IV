@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,10 @@ using OfficeOpenXml;
 using Proyecto_Lab_IV.Data;
 using Proyecto_Lab_IV.Models;
 using Proyecto_Lab_IV.ModelView;
-using System.IO;
 
 namespace Proyecto_Lab_IV.Controllers
 {
+    [Authorize]
     public class VehiculoController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,90 +26,74 @@ namespace Proyecto_Lab_IV.Controllers
             _env = env;
         }
 
-
-        public IActionResult Importar()
+        public async Task<IActionResult> ImportarVehiculos(IFormFile archivo)
         {
-            var archivos = HttpContext.Request.Form.Files;
-            if (archivos != null && archivos.Count > 0)
+            if (archivo == null || archivo.Length == 0)
             {
-                var archivoImpo = archivos[0];
-                if (archivoImpo.Length > 0)
+                ViewBag.Mensaje = "Error: No se ha proporcionado un archivo de Excel";
+                return View();
+            }
+
+            try
+            {
+                using (var package = new ExcelPackage(archivo.OpenReadStream()))
                 {
-                    // subir archivo para luego leer
-                    var pathDestino = Path.Combine(_env.WebRootPath, "impo");
-                    var archivoDestino = Guid.NewGuid().ToString().Replace("-", "") + Path.GetExtension(archivoImpo.FileName);
-                    string rutaCompleta = Path.Combine(pathDestino, archivoDestino);
 
-                    using (var filestream = new FileStream(rutaCompleta, FileMode.Create))
+                        var worksheet = package.Workbook.Worksheets[0];
+
+                        var vehiculos = new List<Vehiculo>();
+
+                    for (int row = worksheet.Dimension.Start.Row; row <= worksheet.Dimension.End.Row; row++)
                     {
-                        archivoImpo.CopyTo(filestream);
-                    };
+                        var patente = worksheet.Cells[row, 1].Value?.ToString();
+                        var marcaIdValue = worksheet.Cells[row, 2].Value;
 
-                    // leer archivo
-                    using (var file = new FileStream(rutaCompleta, FileMode.Open))
-                    {
-                        List<string> renglones = new List<string>();
-                        List<Vehiculo> VehiculoArch = new List<Vehiculo>();
-
-                        StreamReader fileContent = new StreamReader(file); // System.Text.Encoding.Default
-                        do
+                        if (!string.IsNullOrEmpty(patente) && marcaIdValue != null && int.TryParse(marcaIdValue.ToString(), out int marcaId))
                         {
-                            renglones.Add(fileContent.ReadLine());
-                        }
-                        while (!fileContent.EndOfStream);
-
-                        int indice = 0;
-                        foreach (string renglon in renglones)
-                        {
-                            if (indice != 0)
+                            var vehiculo = new Vehiculo
                             {
-                                int salida;
-                                string[] datos = renglon.Split(';');
+                                patente = patente,
+                                marcaId = marcaId,
+                                modelo = worksheet.Cells[row, 3].Value?.ToString(),
+                                anio = Convert.ToInt32(worksheet.Cells[row, 4].Value),
+                                precio = Convert.ToInt32(worksheet.Cells[row, 5].Value),
+                                tipoVehiculoId = Convert.ToInt32(worksheet.Cells[row, 6].Value),
+                                fotografia = worksheet.Cells[row, 7].Value?.ToString(),
+                                color = worksheet.Cells[row, 8].Value?.ToString(),
+                                estado = worksheet.Cells[row, 9].Value?.ToString(),
+                                concesionariaId = Convert.ToInt32(worksheet.Cells[row, 10].Value)
+                            };
 
-                                //if (carrera > 0 && _context.carreras.Where(c => c.Id == carrera).FirstOrDefault() != null)
-                                //{
-                                //    Vehiculo vehiculotemporal = new Vehiculo()
-                                //    {
-                                //        //CarreraId = carrera,
-                                //        //nombre = datos[0].Trim(),
-                                //        //edad = int.TryParse(datos[1].Trim(), out salida) ? salida : 0,
-                                //        //cursando = datos[2].Trim() == "1" ? true : false,
-                                //        //legajo = int.TryParse(datos[3].Trim(), out salida) ? salida : 0,
-                                //    };
-                                //    VehiculoArch.Add(vehiculotemporal);
-                                //}
-                            }
-                            indice++;
-                        }
-                        if (VehiculoArch.Count > 0)
-                        {
-                            _context.vehiculo.AddRange(VehiculoArch);
-                            _context.SaveChanges();
-
-                            ViewBag.resultado = "Se subio archivo";
+                            vehiculos.Add(vehiculo);
                         }
                         else
-                            ViewBag.resultado = "Error en el formato de archivo";
+                        {
+                            // Manejar el caso en el que una celda es null o no tiene el formato esperado
+                            Console.WriteLine($"Error en la fila {row}: La patente o marcaId no tiene el formato esperado.");
+                        }
                     }
-
-                    // borrar archivo temporal
-                    if (System.IO.File.Exists(rutaCompleta))
-                        System.IO.File.Delete(rutaCompleta);
+                    _context.vehiculo.AddRange(vehiculos);
+                    _context.SaveChanges();
                 }
-                else
-                    ViewBag.resultado = "Error en el archivo vacio";
             }
-            else
-                ViewBag.resultado = "Error en el archivo enviado";
+            catch (Exception ex)
+            {
+                ViewBag.Mensaje = "Error: La importación ha fallado. Verifica el formato del archivo o consulta los registros del servidor para obtener más detalles.";
+                Console.WriteLine("Error en la importación: " + ex.Message);
+
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("Excepción interna: " + ex.InnerException.Message);
+                }
+            }
 
             var applicationDbContext = _context.vehiculo
                 .Include(m => m.marca)
                 .Include(t => t.tipoVehiculo)
                 .Include(c => c.concesionaria);
-            return View("Index", applicationDbContext.ToListAsync());
+            return RedirectToAction("Index", await applicationDbContext.ToListAsync());
         }
-
-
+        [AllowAnonymous]
         // GET: Vehiculo
         public async Task<IActionResult> Index(int? busqMarcaId, int? busqTipoVehiculoId, int? busqConcesionariaId, int pagina = 1)
         {

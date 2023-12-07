@@ -4,12 +4,12 @@
 @model List<Proyecto_Lab_IV.Models.Vehiculo>
 
 <div class="container">
-    <h1 class="text-center" style="margin:60px">Catalogo de vehiculos</h1>
+    <h1 class="text-center m-5" >Catalogo de vehiculos</h1>
     <div class="row">
         @foreach (var vehiculo in Model)
         {
             <div class="col-4">
-                <div class="card shadow-sm" style="height:400px;width:400px; margin:20px">
+                <div class="card shadow-sm m-3" style="height:400px;width:400px;">
                     <h5 class="card-title text-center" style="margin:10px">Concesionario: @vehiculo.concesionaria.nombre</h5>
                     @if (!string.IsNullOrEmpty(vehiculo.fotografia))
                     {

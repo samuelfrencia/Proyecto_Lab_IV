@@ -12,15 +12,14 @@
 </p><br />
 <div class="row">
     <div class="col-md-12">
-        Importar datos desde archivo Excel:
-        <form asp-action="Importar" enctype="multipart/form-data">
+        <form method="post" asp-action="ImportarVehiculos" enctype="multipart/form-data">
             <div class="form-group">
-                <input name="archImportar" id="archImportarE" type="file" />
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Importar" class="btn btn-outline-dark" />
+                <label for="archImportar">Selecciona un archivo Excel:</label>
+                <input style="width:auto;" type="file" name="archivo" id="archivo" class="form-control" />
+                <input type="submit" value="Importar" class="btn btn-outline-dark mt-2" />
             </div>
         </form>
+
     </div>
 </div>
 
@@ -47,7 +46,7 @@
         </div>
         <div class="col-3"><br />
             <input class="btn btn-outline-info" type="submit" value="Buscar" /> ~
-	        <input class="btn btn-outline-dark" type="reset" value="Limpiar filtros" />
+            <a asp-action="Index" class="btn btn-outline-dark">Limpiar</a>
         </div>
 	</div>
 </form>
