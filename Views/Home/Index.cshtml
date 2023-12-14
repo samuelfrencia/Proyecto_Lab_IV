@@ -8,12 +8,12 @@
     <div class="row">
         @foreach (var vehiculo in Model)
         {
-            <div class="col-4">
-                <div class="card shadow-sm m-3" style="height:400px;width:400px;">
+            <div class="col-md-4">
+                <div class="card shadow-sm m-3" style="">
                     <h5 class="card-title text-center" style="margin:10px">Concesionario: @vehiculo.concesionaria.nombre</h5>
                     @if (!string.IsNullOrEmpty(vehiculo.fotografia))
                     {
-                        <img src="~/fotos/@vehiculo.fotografia" class="img-fluid mx-auto d-block mt-2" style="max-width:200px; max-height:200px;" />
+                        <img src="~/fotos/@vehiculo.fotografia" class="img-fluid mx-auto d-block m-2" style="max-width:400px; max-height:400px;" />
                     }
                     <div class="card-body">
                         <h4 class="card-title">@vehiculo.marca.nombre @vehiculo.modelo @vehiculo.anio (@vehiculo.estado)</h4>
